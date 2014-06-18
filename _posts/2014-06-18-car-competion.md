@@ -262,14 +262,17 @@ public class CarCompetion {
 说了这么多，其实有些对j.u.c熟悉的人一开始就会表示知道java本身就提供了这个问题的实现`CountDownLatch`和`CyclicBarrier`。前者是一次性的，用于类似赛车的同时启动场景，或者等待所有线程执行结束。后者是可以多次用的，可以处理线程运行间的依赖，比如执行某个线程，必须保证前置的几个线程任务完成。API都比较简单，这里简单说下`CountDownLatch`的用法，具体可以查看JDK说的会更详细。
 
 构造`CountDownLatch`的时候需要传递构造函数即有几辆车：
+
 ```java
 CountDownLatch competion = new CountDownLatch(10);
 ```
+
 每个赛车进程先后去调用CountDownLatch的countDown方法与await方法（为了与Object.wait区分）。即在赛车进程的run函数里面有代码：
 ```java
 competion.countDown();
 competion.await();
 ```
+
 这里要注意的是countDown()当计数已经为0时，不做任何操作；操作后为0则通知所有阻塞线程。await()在计数不为0时，阻塞等待计数为0的通知；为0时不阻塞，直接返回。await()的方法可以被中断，且有时限版的api。
 
 > public boolean await(long timeout,TimeUnit unit)
