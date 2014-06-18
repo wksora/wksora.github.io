@@ -98,7 +98,9 @@ public static void main(String[] args) {
 > JDK中 Object.notifyAll方法的释义
 > 
 > public final void notifyAll()
+>
 > 唤醒在此对象监视器上等待的所有线程。线程通过调用其中一个 wait 方法，在对象的监视器上等待。
+>
 > 直到当前线程放弃此对象上的锁定，才能继续执行被唤醒的线程。被唤醒的线程将以常规方式与在该对象上主动同步的其他所有线程进行竞争；例如，唤醒的线程在作为锁定此对象的下一个线程方面没有可靠的特权或劣势。
 
 看出来了么，至少我感觉到了我之前解法的不足，notifyAll看名字好像是通知到所有其他的赛车，让他们开始启动了！其实不然，它是让所有在赛车上排队的赛车们醒来了，但是这些赛车们还是得竞争赛场的锁，最后只有一个赛车会胜出（线程仍为阻塞状态，所处锁对象的锁池），其他赛车乖乖的继续wait吧（线程仍为阻塞状态，所处锁对象的等待池）。等前一辆赛车的run方法，执行完synchronized同步块后，锁才真正的交给它（从锁池中拿一个线程出来，转为运行态），然后他才执行notifyAll通知剩下的赛车，最后跟着前一辆先不客气的跑了。这里需要看一下[Java线程生命周期](http://www.cnblogs.com/mengdd/archive/2013/02/20/2917966.html)这篇文章，会对Java线程的生命周期有初步的了解。
@@ -113,14 +115,21 @@ Jvm对运行态的线程有两种定义，一个是Runnable一个是Running，�
 先列一下`AbstractQueuedSynchronizer`的方法，有点多根据需要会介绍（未包含所有的，比如可中断的acquire方法等）：
 > To use this class as the basis of a synchronizer, redefine the following methods, as applicable, by inspecting and/or modifying the synchronization state using getState(), setState(int) and/or compareAndSetState(int, int):
 > 
+>
 > protected boolean tryAcquire(int)
+>
 > protected boolean tryRelease(int)
+>
 > protected boolean tryAcquireShared(int)
+>
 > protected boolean tryReleaseShared(int)
 > 
 > public final void acquire(int)
+>
 > public final void acquireShared(int)
+>
 > public final void release(int)
+>
 > public final void releaseShared(int)
 
 `AbstractQueuedSynchronizer`本身不再依靠java的`synchronized`关键字做同步控制了，思考一下同步本质在做什么事情呢？我们同步线程的时候往往需要对对象加锁，加锁的目的是为了让该对象的值或者该对象守护的值进行“同步修改”，即你修改的过程不会被干扰，别人直到你修改后才会读到你修改后的值，所以从某个角度来说，同步的目的是为了同步状态。没有了语法上的帮助，AQS采用了CPU级别的并发原语，也就是介绍中的compareAndSetState(int, int)方法，即比较并设置操作（或者比较并替换compare and swap，有些地方这么称，简称都是CAS操作）。我们通过`getState()`拿到了一个状态A，和状态隐含的地址&A，需要对它进行计算f并得到新的状态B，我们现在要B写到&A上，我们要保证此时的&A上的值仍为读取用于计算的原来的A才进行赋值，如果相等则赋值&A地址上的值为B，如果不相等则重新`getState()`，计算f，并再次CAS，这里是一个**自旋锁**（即不等待或者等待短时间就重新进行操作，区别于阻塞通知模型）的过程。这里举一个例子表达一下刚才的过程。
