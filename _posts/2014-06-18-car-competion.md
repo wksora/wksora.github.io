@@ -268,6 +268,7 @@ CountDownLatch competion = new CountDownLatch(10);
 ```
 
 每个赛车进程先后去调用CountDownLatch的countDown方法与await方法（为了与Object.wait区分）。即在赛车进程的run函数里面有代码：
+
 ```java
 competion.countDown();
 competion.await();
