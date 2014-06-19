@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Post list
+title: wksora blog
+description: "This a blog shares about my thinking of the technology in field of computer science and software engineering."
 ---
 {% include JB/setup %}
 
