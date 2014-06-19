@@ -10,12 +10,12 @@ encoding: utf-8
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
-title : bevoid
-tagline: Site Tagline
+title : wksora
+tagline: no thing
 author :
-  name : bevoid
+  name : wksora
   email : wksora@gmail.com
-  github : bevoid
+  github : wksora
  # twitter : wksora@gmail.com
  # feedburner : feedname
 
@@ -27,7 +27,7 @@ author :
 # Else if you are pushing to username.github.io, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://bevoid.github.io
+production_url : http://wksora.github.io
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :
@@ -83,11 +83,11 @@ JB :
   comments :
     provider : disqus
     disqus :
-      short_name : bevoid
+      short_name : wksora
     livefyre :
       site_id : 123
     intensedebate :
-      account : bevoid
+      account : wksora
     facebook :
       appid : 123
       num_posts: 5
