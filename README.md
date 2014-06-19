@@ -1,4 +1,4 @@
-bevoid.github.io
+wksora.github.io
 ================
 
 This is a personal blog, powered by [Jekyll-Bootstrap](http://jekyllbootstrap.com).
