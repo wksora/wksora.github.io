@@ -117,4 +117,76 @@ List<Object> resultList = Collections
             .synchronizedList(new ArrayList<Object>());
 ```
 
+### Future ###
+最后研究一下Future的状态是什么时候被更新的。
+Future的获得从入口方法是从submit开始，此时的执行线程为主线程。举例的submit方法来自`AbstractExecutorService`。
+
+```java
+public <T> Future<T> submit(Callable<T> task) {
+    if (task == null) throw new NullPointerException();
+    RunnableFuture<T> ftask = newTaskFor(task);
+    execute(ftask);
+    return ftask;
+}
+```
+该方法通过`newTaskFor`方法生成了一个`RunnableFuture<T>`，在`newTaskFor`实际只是做了简单的包装，并返回了`RunnableFuture<T>`的实现类`FutureTask<T>`。
+
+```java
+protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
+    return new FutureTask<T>(callable);
+}
+```
+
+顾名思义，`RunnableFuture<T>`是继承了`Runnable`和`Future<T>`两个接口的接口，而`FutureTask<T>`是对应的实现类，并握有传入的`Callable<T>`实际任务的执行对象。
+
+回到submit方法，接着该方法调用`execute`方法，`execute`是`Executor`接口定义的方法，即通用的执行`Runnable`的方法，因此之前需要对`Future`包装一层`Runnalbe`。
+
+抽象类`AbstractExecutorService`并没有实现`execute`方法，实际执行的是实现类，这里举例为`ThreadPoolExecutor`，该方法根据连接池当前的状态,分了三种情况处理，如果成功的话实际会调用了`addWorker`方法增加一个工作线程。
+
+在addWorker方法new了一个Worker对象，Worker类实现了AQS抽象类和Runnable接口为`ThreadPoolExecutor`内部类，Worker的构造函数接受Runnable，并会从`ThreadPoolExecutor`的`getThreadFactory()`线程工厂中获取一个线程，注意这里Worker也实现了Runnable，所以把自己注册为所获得的线程的执行类。
+
+```java
+private final class Worker
+    extends AbstractQueuedSynchronizer
+    implements Runnable{
+...
+    Worker(Runnable firstTask) {
+        setState(-1); // inhibit interrupts until runWorker
+        this.firstTask = firstTask;
+        this.thread = getThreadFactory().newThread(this);
+    }    
+}
+```
+
+类`ThreadPoolExecutor`的`execute`方法紧接着会获得`Worker`的`thread`，并调用其`start`方法，这里开始异步运算。主线程会根据`addWorker`的状态做处理，然后返回，跟着`submit`也会返回。
+
+接下来是异步执行`Worker`的`thread.start()`的情况。该线程执行实际执行的是`Worker`的`run`方法，该方法很简单就一句`runWorker(this);`，调用了的是`ThreadPoolExecutor`的`runWorker`方法。
+
+`runWorker`方法负责更新线程池的状态，所以这里有获取锁的操作，也负责从队列里获取等待的线程执行（当传入的Worker的firstTask为null时），但是跟我们的目的没关系，在该方法会执行从`Worker`获取的`firstTask.run()`。所以这里得回到一开始的`FutureTask<T>`的`run`方法，该方法会执行`Callable`的`call`方法，并收集结果或者是发生的异常，然后调用`set`或者`setException`方法。举例set来说方法如下，其调用并发原语来变更`FutureTask<T>`的运行状态状态。
+
+```java
+protected void set(V v) {
+    if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
+        outcome = v;
+        UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state
+        finishCompletion();
+    }
+}
+
+public boolean isDone() {
+    return state != NEW;
+}
+```
+
+`FutureTask`一共有7钟生命周期状态，其中isDone()判断只是不等于NEW状态，NEW状态为初始构造`FutureTask`的状态。
+
+> FutureTask的声明周期状态
+> 
+> NEW -> COMPLETING -> NORMAL
+> NEW -> COMPLETING -> EXCEPTIONAL
+> NEW -> CANCELLED
+> NEW -> INTERRUPTING -> INTERRUPTED
+
+
+
 **除了文章中有特别说明，均为本人wksora原创文章，转载请以链接形式注明出处。**
