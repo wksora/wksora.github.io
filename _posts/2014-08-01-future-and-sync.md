@@ -178,7 +178,7 @@ public boolean isDone() {
 
 `FutureTask`一共有7钟生命周期状态，其中isDone()判断只是不等于NEW状态，NEW状态为初始构造`FutureTask`的状态。
 
-> FutureTask的声明周期状态
+> FutureTask的生命周期状态
 > 
 > NEW -> COMPLETING -> NORMAL
 > 
