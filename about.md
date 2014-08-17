@@ -6,20 +6,22 @@ group: navigation
 ---
 {% include JB/setup %}
 
-我是一名光荣的码农，主要使用Java进行开发，计算机相关的知识面比较广但深的不多。目前仍是一名研究生。
+#### 简介 ####
+我是一名光荣的码农，主要使用Java进行开发，计算机相关的知识面比较广但深的不多。目前仍是一名研究生。（真的很简）
 
-### 我的兴趣 ###
+
+#### 我的兴趣 ####
 
 - Java及相关技术，J2EE，Java语言本身
 
 - 分布式应用
 
-### 桑心阿宝特米 ###
+#### 桑心阿宝特米 ####
 
-我的网络ID是：wksora
+- 我的ID：wksora
 
-我的女朋友是：april
+- 我的女朋友：april
 
-曾经就职于：Alipay inc. as software engineer intern
+- 曾经就职于：Alipay inc. as software engineer intern
 
-邮箱：wksoraATgmail。com
+- 邮箱：wksoraATgmail。com

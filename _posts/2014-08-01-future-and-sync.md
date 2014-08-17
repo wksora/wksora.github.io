@@ -1,6 +1,7 @@
 ---
 layout: post
-title: "如何等待多个分片任务的执行结果——分享一个关于混用同步与异步机制时犯的错误"
+title: "如何等待多个分片任务的执行结果"
+tagline: "分享一个关于混用同步与异步机制时犯的错误"
 description: ""
 category: 
 tags: ["java", "多线程", "并发", "Future"]
