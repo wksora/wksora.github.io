@@ -1,7 +1,7 @@
 /* desert scheme ported from vim to google prettify */
 pre.prettyprint { 
   display: block; 
-  background-color: rgb(240,248,248);
+  background-color: #f7f7f9;
   margin: 0 0 10px;
   padding: 6px 3rem; 
 }
