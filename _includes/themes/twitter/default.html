@@ -31,6 +31,8 @@
     <!-- atom & rss feed -->
     <link href="{{ BASE_PATH }}{{ site.JB.atom_path }}" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
     <link href="{{ BASE_PATH }}{{ site.JB.rss_path }}" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+    <link href="{{ ASSET_PATH }}/google-code-prettify/light.css" rel="stylesheet" type="text/css" media="all">
   </head>
 
   <body>
@@ -61,5 +63,13 @@
     </div>
 
     {% include JB/analytics %}
+    <script src="{{ ASSET_PATH }}/js/jquery.min.js"></script>
+    <script src="{{ ASSET_PATH }}/google-code-prettify/prettify.js"></script>
+    <script>
+    $(function() {
+        $('pre').addClass('prettyprint linenums');
+        window.prettyPrint && prettyPrint();
+    });
+    </script>
   </body>
 </html>

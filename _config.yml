@@ -4,13 +4,14 @@ permalink: /:month-:year/:title.html
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 pygments: true
-markdown: redcarpet
+markdown: rdiscount
 encoding: utf-8
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
 title : 索思
+safe: false
 tagline: no thing
 author :
   name : wksora
@@ -27,7 +28,10 @@ author :
 # Else if you are pushing to username.github.io, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://wksora.github.io
+production_url : https://wksora.github.io
+
+encoding: utf-8
+
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :
