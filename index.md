@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 主页
+title: 索思—WKSORA个人博客主页
 description: "This a blog shares about my thinking of the technology in field of computer science and software engineering. 这里是我的博客，博客的内容主要为技术相关的分享和思考。"
 ---
 {% include JB/setup %}
